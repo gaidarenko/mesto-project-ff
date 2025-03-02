@@ -1,12 +1,5 @@
-// @todo: Темплейт карточки
-
-// @todo: DOM узлы
-
-// @todo: Функция создания карточки
-
-// @todo: Функция удаления карточки
-
-// @todo: Вывести карточки на страницу
+import '../pages/index.css';
+import { initialCards } from './cards';
 
 function createCard(card, callback) {
   const cardTemplate = document.querySelector('#card-template').content;
