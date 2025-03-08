@@ -1,81 +1,53 @@
 import '../pages/index.css';
 import { initialCards } from './cards';
-
-function createCard(card, deleteCallback, likeCallback = doLike) {
-  const cardTemplate = document.querySelector('#card-template').content;
-  const cardElement = cardTemplate.querySelector('.places__item').cloneNode(true);
-
-  cardElement.querySelector('.card__image').src = card.link;
-
-  cardElement.querySelector('.card__image').addEventListener('click', function() {
-    const popup = document.querySelector('.popup_type_image');
-    popup.querySelector('.popup__image').src = card.link;
-    popup.querySelector('.popup__caption').textContent = card.name;
-    popup.style.display = "flex";  
-  });
-
-  cardElement.querySelector('.card__title').textContent = card.name;
-  cardElement.querySelector('.card__delete-button').addEventListener('click', deleteCallback);
-  cardElement.querySelector('.card__like-button').addEventListener('click', likeCallback);
-
-  return cardElement;
-}
-
-function doLike(evt) {
-  evt.target.classList.toggle('card__like-button_is-active');
-}
-
-function deleteCard(event) {
-  event.target.parentElement.remove();
-}
+import { createCard, doLike, deleteCard, showImage } from './card';
+import { closeModal, openModal } from './modal';
 
 const placesElement = document.querySelector('.places__list');
+// Форма редактирование профиля
+const editForm = document.forms['edit-profile'];
+// Форма добавления нового места
+const newForm = document.forms['new-place'];
 
 initialCards.forEach(function(card) {
-  placesElement.append(createCard(card, deleteCard, doLike));
+  placesElement.append(createCard(card, deleteCard, doLike, showImage));
 });
 
+// Редактирование имени профиля
 document.querySelector('.profile__edit-button').addEventListener('click', function(evt) {
-  document.forms['edit-profile'].elements.name.value = document.querySelector('.profile__title').textContent;
-  document.forms['edit-profile'].elements.description.value = document.querySelector('.profile__description').textContent;
+  editForm.elements.name.value = document.querySelector('.profile__title').textContent;
+  editForm.elements.description.value = document.querySelector('.profile__description').textContent;
 
-  const popup = document.querySelector('.popup_type_edit');
-  popup.style.display = "flex";
+  openModal(document.querySelector('.popup_type_edit'));
 });
 
+// Добавление новой карточки
 document.querySelector('.profile__add-button').addEventListener('click', function(evt) {
-  const popup = document.querySelector('.popup_type_new-card');
-  popup.style.display = "flex";
+  openModal(document.querySelector('.popup_type_new-card'));
 });
 
-function closePopups() {
-  document.querySelectorAll('.popup').forEach(popup => popup.style.display = null );
-}
-
-// Кнопка закрытия "X"
-document.querySelectorAll('.popup__close').forEach(button => button.addEventListener('click', closePopups));
-
-
-// Закрытие кликом на оверлее
-document.querySelectorAll('.popup').forEach(popup => popup.addEventListener('click', evt => {
-  if (evt.target.classList.contains('popup')) {
-    closePopups();
-  }
-}));
-
-
-// Закрытие по ESC
-window.addEventListener('keydown', function(evt) {
-  if (evt.key === 'Escape') {
-    closePopups();
-  }
-});
-
-document.forms['edit-profile'].addEventListener('submit', function(evt) {
+// Сохранение имени профиля
+editForm.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  document.querySelector('.profile__title').textContent = document.forms['edit-profile'].elements.name.value;
-  document.querySelector('.profile__description').textContent = document.forms['edit-profile'].elements.description.value;
+  document.querySelector('.profile__title').textContent = editForm.elements.name.value;
+  document.querySelector('.profile__description').textContent = editForm.elements.description.value;
 
-  closePopups();
+  closeModal(document.querySelector('.popup_type_edit'));
+});
+
+// Добавление нового места
+newForm.addEventListener('submit', function(evt) {
+  evt.preventDefault();
+
+  const name = newForm.elements['place-name'].value;
+  const link = newForm.elements.link.value;
+
+  const card = createCard({ name, link });
+  placesElement.prepend(card);
+
+  newForm.elements['place-name'].value = '';
+  newForm.elements.link.value = '';
+
+  closeModal(document.querySelector('.popup_type_new-card'));
 });
