@@ -2,6 +2,7 @@ import '../pages/index.css';
 import { initialCards } from './cards';
 import { createCard, doLike, deleteCard, getImageAltText } from './card';
 import { closeModal, openModal } from './modal';
+import { getInitialCards, getProfileInfo, updateProfileInfo, addCard } from './api';
 
 const placesElement = document.querySelector('.places__list');
 
@@ -10,6 +11,7 @@ const formProfile = document.forms['edit-profile'];
 const popupProfile = document.querySelector('.popup_type_edit');
 const profileTitle = document.querySelector('.profile__title');
 const profileDescription = document.querySelector('.profile__description');
+const profileImage = document.querySelector('.profile__image');
 
 // Форма добавления нового места
 const formAddNewCard = document.forms['new-place'];
@@ -20,9 +22,49 @@ const popupFullImage = document.querySelector('.popup_type_image');
 const imagePopupFullImage = document.querySelector('.popup__image');
 const captionPopupFullImage = document.querySelector('.popup__caption');
 
+let clientId = null;
+
+getProfileInfo()
+  .then(res => {
+    profileTitle.textContent = res.name;
+    profileDescription.textContent = res.about;
+    profileImage.backgroundImage = res.avatar;
+    clientId = res._id;
+
+    // console.log(res);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+getInitialCards()
+  .then(res => {
+    res.forEach(function(card) {
+      placesElement.append(createCard(card, deleteCard, doLike, showFullImage, clientId));
+    });
+    console.log(res);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+getProfileInfo()
+  .then(res => {
+    profileTitle.textContent = res.name;
+    profileDescription.textContent = res.about;
+    profileImage.backgroundImage = res.avatar;
+    clientId = res._id;
+
+    // console.log(res);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
+  /*
 initialCards.forEach(function(card) {
   placesElement.append(createCard(card, deleteCard, doLike, showFullImage));
-});
+}); */
 
 // Редактирование имени профиля
 document.querySelector('.profile__edit-button').addEventListener('click', function(evt) {
@@ -41,8 +83,16 @@ document.querySelector('.profile__add-button').addEventListener('click', functio
 formProfile.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  profileTitle.textContent = formProfile.elements.name.value;
-  profileDescription.textContent = formProfile.elements.description.value;
+  updateProfileInfo(formProfile.elements.name.value, formProfile.elements.description.value)
+    .then(res => {
+      profileTitle.textContent = formProfile.elements.name.value;
+      profileDescription.textContent = formProfile.elements.description.value;
+      
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    })
 
   closeModal(popupProfile);
 });
@@ -54,8 +104,15 @@ formAddNewCard.addEventListener('submit', function(evt) {
   const name = formAddNewCard.elements['place-name'].value;
   const link = formAddNewCard.elements.link.value;
 
-  const card = createCard({ name, link }, deleteCard, doLike, showFullImage);
-  placesElement.prepend(card);
+  addCard(name, link)
+    .then(res => {
+      const card = createCard({ name, link }, deleteCard, doLike, showFullImage);
+      placesElement.prepend(card);    
+    })
+    .catch(err => {
+      console.log(err)
+    });
+    
 
   formAddNewCard.reset();
 
