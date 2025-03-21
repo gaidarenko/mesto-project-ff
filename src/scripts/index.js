@@ -22,49 +22,20 @@ const popupFullImage = document.querySelector('.popup_type_image');
 const imagePopupFullImage = document.querySelector('.popup__image');
 const captionPopupFullImage = document.querySelector('.popup__caption');
 
-let clientId = null;
 
-getProfileInfo()
-  .then(res => {
-    profileTitle.textContent = res.name;
-    profileDescription.textContent = res.about;
-    profileImage.backgroundImage = res.avatar;
-    clientId = res._id;
+Promise.all([getProfileInfo(), getInitialCards()])
+  .then(([profile, cards]) => {
+    profileTitle.textContent = profile.name;
+    profileDescription.textContent = profile.about;
+    profileImage.backgroundImage = profile.avatar;
 
-    // console.log(res);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-
-getInitialCards()
-  .then(res => {
-    res.forEach(function(card) {
-      placesElement.append(createCard(card, deleteCard, doLike, showFullImage, clientId));
+    cards.forEach(function(card) {
+      placesElement.append(createCard(card, deleteCard, doLike, showFullImage, profile._id));
     });
-    console.log(res);
   })
   .catch(err => {
     console.log(err);
   });
-
-getProfileInfo()
-  .then(res => {
-    profileTitle.textContent = res.name;
-    profileDescription.textContent = res.about;
-    profileImage.backgroundImage = res.avatar;
-    clientId = res._id;
-
-    // console.log(res);
-  })
-  .catch(err => {
-    console.log(err);
-  });
-
-  /*
-initialCards.forEach(function(card) {
-  placesElement.append(createCard(card, deleteCard, doLike, showFullImage));
-}); */
 
 // Редактирование имени профиля
 document.querySelector('.profile__edit-button').addEventListener('click', function(evt) {

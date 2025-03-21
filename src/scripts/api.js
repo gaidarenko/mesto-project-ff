@@ -15,7 +15,7 @@ export const getInitialCards = () => {
         return res.json();
       }
 
-      return Promise.reject(`Ошибка: ${res.status}`);
+      return Promise.reject(`Ошибка запроса карточек: ${res.status}`);
     });
 }
 
@@ -28,7 +28,7 @@ export const getProfileInfo = () => {
         return res.json();
       }
   
-      return Promise.reject(`Ошибка: ${res.status}`);
+      return Promise.reject(`Ошибка получения профиля: ${res.status}`);
     });
 }
 
@@ -43,7 +43,7 @@ export const updateProfileInfo = (name, about) => {
         return res.json();  
       }
 
-      return Promise.reject(`Ошибка ${res.status}`);
+      return Promise.reject(`Ошибка изменения профиля: ${res.status}`);
     });
 }
 
@@ -58,7 +58,7 @@ export const addCard = (name, link) => {
         return res.json();
       }
 
-      return Promise.reject(`Ошибка ${res.status}`);
+      return Promise.reject(`Ошибка добавления карточки: ${res.status}`);
     });
 }
 
@@ -72,7 +72,7 @@ export const deleteCard = (id) => {
         return res.json();
       }
     
-      return Promise.reject(`Ошибка ${res.status}`);
+      return Promise.reject(`Ошибка удаления карточки: ${res.status}`);
     });
 }
 
@@ -86,7 +86,7 @@ export const addLike = (id) => {
         return res.json();
       }
 
-      return Promise.reject(`Ошибка ${res.status}`);
+      return Promise.reject(`Ошибка добавления лайка: ${res.status}`);
     });
 }
 
@@ -100,6 +100,6 @@ export const deleteLike = (id) => {
           return res.json();
         }
   
-        return Promise.reject(`Ошибка ${res.status}`);
+        return Promise.reject(`Ошибка удаления лайка: ${res.status}`);
       });
   }
