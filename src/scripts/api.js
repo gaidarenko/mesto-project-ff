@@ -91,15 +91,30 @@ export const addLike = (id) => {
 }
 
 export const deleteLike = (id) => {
-    return fetch(`${config.baseUrl}/cards/likes/${id}`, {
-      method: 'DELETE',
-      headers: config.headers
-    })
-      .then(res => {
-        if (res.ok) {
-          return res.json();
-        }
+  return fetch(`${config.baseUrl}/cards/likes/${id}`, {
+    method: 'DELETE',
+    headers: config.headers
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
   
-        return Promise.reject(`Ошибка удаления лайка: ${res.status}`);
-      });
-  }
+      return Promise.reject(`Ошибка удаления лайка: ${res.status}`);
+    });
+}
+
+export const updateAvatar = (avatar) => {
+  return fetch(`${config.baseUrl}/users/me/avatar`, {
+    method: 'PATCH',
+    headers: config.headers,
+    body: JSON.stringify({avatar})
+  })
+    .then(res => {
+      if (res.ok) {
+        return res.json();
+      }
+
+      return Promise.reject(`Ошибка обновления аватара: ${res.status}`);
+    });
+}

@@ -2,7 +2,7 @@ import '../pages/index.css';
 import { initialCards } from './cards';
 import { createCard, doLike, deleteCard, getImageAltText } from './card';
 import { closeModal, openModal } from './modal';
-import { getInitialCards, getProfileInfo, updateProfileInfo, addCard } from './api';
+import { getInitialCards, getProfileInfo, updateProfileInfo, addCard, updateAvatar } from './api';
 
 const placesElement = document.querySelector('.places__list');
 
@@ -22,12 +22,17 @@ const popupFullImage = document.querySelector('.popup_type_image');
 const imagePopupFullImage = document.querySelector('.popup__image');
 const captionPopupFullImage = document.querySelector('.popup__caption');
 
+// Форма смена картинки аватара
+const formAvatar = document.forms['edit-avatar'];
+const popupAvatar = document.querySelector('.popup_type_avatar');
 
 Promise.all([getProfileInfo(), getInitialCards()])
   .then(([profile, cards]) => {
     profileTitle.textContent = profile.name;
     profileDescription.textContent = profile.about;
-    profileImage.backgroundImage = profile.avatar;
+    profileImage.style.backgroundImage = `url(${profile.avatar})`;
+
+    console.log(profile);
 
     cards.forEach(function(card) {
       placesElement.append(createCard(card, deleteCard, doLike, showFullImage, profile._id));
@@ -45,9 +50,33 @@ document.querySelector('.profile__edit-button').addEventListener('click', functi
   openModal(popupProfile);
 });
 
+// Обновление аватара
+document.querySelector('.profile__image').addEventListener('click', function(evt) {
+  openModal(popupAvatar);
+});
+
 // Добавление новой карточки
 document.querySelector('.profile__add-button').addEventListener('click', function(evt) {
   openModal(popupAddNewCard);
+});
+
+// Сохранение нового аватара
+formAvatar.addEventListener('submit', function(evt) {
+  evt.preventDefault();
+
+  const link = formAvatar.elements.link.value;
+
+  updateAvatar(link)
+    .then(res => {
+      profileImage.style.backgroundImage = `url(${res.avatar})`;
+    })
+    .catch(err => {
+      console.log(err);
+    })
+
+  formAvatar.reset();
+
+  closeModal(popupAvatar);
 });
 
 // Сохранение имени профиля
