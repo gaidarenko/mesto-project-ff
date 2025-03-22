@@ -62,7 +62,7 @@ export const addCard = (name, link) => {
     });
 }
 
-export const deleteCard = (id) => {
+export const removeCard = (id) => {
   return fetch(`${config.baseUrl}/cards/${id}`, {
     method: 'DELETE',
     headers: config.headers

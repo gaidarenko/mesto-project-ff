@@ -1,5 +1,5 @@
 
-import { addLike, deleteLike } from './api';
+import { addLike, deleteLike, removeCard } from './api';
 
 const cardTemplate = document.querySelector('#card-template').content;
 
@@ -76,7 +76,15 @@ export function doLike(evt, id, element) {
   
 export function deleteCard(evt, id) {
   console.log(`Delete card ${id}`);
-  evt.target.closest('.card').remove();
+
+  removeCard(id)
+    .then(res => {
+      console.log(res);
+      evt.target.closest('.card').remove();
+    })
+    .catch(err => {
+      console.log(err);
+    });
 }
 
 export function getImageAltText(name) {

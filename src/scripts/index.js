@@ -64,6 +64,8 @@ document.querySelector('.profile__add-button').addEventListener('click', functio
 formAvatar.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
+  formAvatar.elements.submit.textContent = 'Сохранение...';
+
   const link = formAvatar.elements.link.value;
 
   updateAvatar(link)
@@ -73,15 +75,19 @@ formAvatar.addEventListener('submit', function(evt) {
     .catch(err => {
       console.log(err);
     })
+    .finally(() => {
+      formAvatar.elements.submit.textContent = 'Сохранить';
+      formAvatar.reset();
+      closeModal(popupAvatar);
+    });
 
-  formAvatar.reset();
-
-  closeModal(popupAvatar);
 });
 
 // Сохранение имени профиля
 formProfile.addEventListener('submit', function(evt) {
   evt.preventDefault();
+
+  formProfile.elements.submit.textContent = 'Сохранение...';
 
   updateProfileInfo(formProfile.elements.name.value, formProfile.elements.description.value)
     .then(res => {
@@ -93,30 +99,36 @@ formProfile.addEventListener('submit', function(evt) {
     .catch(err => {
       console.log(err);
     })
+    .finally(() => {
+      formProfile.elements.submit.textContent = 'Сохранить';
+      closeModal(popupProfile);
+    });
 
-  closeModal(popupProfile);
 });
 
 // Добавление нового места
 formAddNewCard.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
+  formAddNewCard.elements.submit.textContent = 'Сохранение...';
+
   const name = formAddNewCard.elements['place-name'].value;
   const link = formAddNewCard.elements.link.value;
 
   addCard(name, link)
     .then(res => {
-      const card = createCard({ name, link }, deleteCard, doLike, showFullImage);
+      console.log(res);
+      const card = createCard(res, deleteCard, doLike, showFullImage, res.owner._id);
       placesElement.prepend(card);    
     })
     .catch(err => {
       console.log(err)
+    })
+    .finally(() => {
+      formAddNewCard.elements.submit.textContent = 'Сохранить';
+      formAddNewCard.reset();
+      closeModal(popupAddNewCard);
     });
-    
-
-  formAddNewCard.reset();
-
-  closeModal(popupAddNewCard);
 });
 
 // Добавим обработчики закрытия 
