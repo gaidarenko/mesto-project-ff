@@ -1,7 +1,7 @@
 import '../pages/index.css';
-import { initialCards } from './cards';
 import { createCard, doLike, deleteCard, getImageAltText } from './card';
 import { closeModal, openModal } from './modal';
+import { clearValidation, enableValidation } from './validation';
 import { getInitialCards, getProfileInfo, updateProfileInfo, addCard, updateAvatar } from './api';
 
 const placesElement = document.querySelector('.places__list');
@@ -47,16 +47,21 @@ document.querySelector('.profile__edit-button').addEventListener('click', functi
   formProfile.elements.name.value = profileTitle.textContent;
   formProfile.elements.description.value = profileDescription.textContent;
 
+  clearValidation(popupProfile);
   openModal(popupProfile);
 });
 
 // Обновление аватара
 document.querySelector('.profile__image').addEventListener('click', function(evt) {
+  formAvatar.reset();
+  clearValidation(popupAvatar);
   openModal(popupAvatar);
 });
 
 // Добавление новой карточки
 document.querySelector('.profile__add-button').addEventListener('click', function(evt) {
+  formAddNewCard.reset();
+  clearValidation(popupAddNewCard);
   openModal(popupAddNewCard);
 });
 
@@ -151,3 +156,14 @@ function showFullImage(name, link) {
 
   openModal(popupFullImage);
 }
+
+enableValidation();
+/*
+{
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__error_visible'
+}); */
