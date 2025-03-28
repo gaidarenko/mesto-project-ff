@@ -32,8 +32,6 @@ Promise.all([getProfileInfo(), getInitialCards()])
     profileDescription.textContent = profile.about;
     profileImage.style.backgroundImage = `url(${profile.avatar})`;
 
-    console.log(profile);
-
     cards.forEach(function(card) {
       placesElement.append(createCard(card, deleteCard, doLike, showFullImage, profile._id));
     });
@@ -98,8 +96,6 @@ formProfile.addEventListener('submit', function(evt) {
     .then(res => {
       profileTitle.textContent = formProfile.elements.name.value;
       profileDescription.textContent = formProfile.elements.description.value;
-      
-      console.log(res);
     })
     .catch(err => {
       console.log(err);
@@ -122,7 +118,6 @@ formAddNewCard.addEventListener('submit', function(evt) {
 
   addCard(name, link)
     .then(res => {
-      console.log(res);
       const card = createCard(res, deleteCard, doLike, showFullImage, res.owner._id);
       placesElement.prepend(card);    
     })
