@@ -1,13 +1,4 @@
-export const VALIDATION_CONFIG = {
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__input-error_active'
-}
-
-export const clearValidation = (formElement, config = VALIDATION_CONFIG) => {
+export const clearValidation = (formElement, config) => {
   const inputList = Array.from(formElement.querySelectorAll(config.inputSelector));
 
   inputList.forEach((inputElement) => {
@@ -16,11 +7,10 @@ export const clearValidation = (formElement, config = VALIDATION_CONFIG) => {
 
   // Сделаем кнопку неактивной
   const buttonElement = formElement.querySelector(config.submitButtonSelector);
-  buttonElement.disabled = true;
-  buttonElement.classList.add(config.inactiveButtonClass);
+  setButtonState(true, buttonElement, config); 
 }
 
-export const enableValidation = (config = VALIDATION_CONFIG) => {
+export const enableValidation = (config) => {
   const formList = Array.from(document.querySelectorAll(config.formSelector));
 
   formList.forEach(formElement => {
@@ -78,7 +68,11 @@ const hasInvalidInput = (inputList) => {
 }; 
   
 const toggleButtonState = (inputList, buttonElement, config) => {
-  if (hasInvalidInput(inputList)) {
+  setButtonState(hasInvalidInput(inputList), buttonElement, config);
+}
+
+const setButtonState = (disable, buttonElement, config) => {
+  if (disable) {
     buttonElement.disabled = true;
     buttonElement.classList.add(config.inactiveButtonClass);
   } else {

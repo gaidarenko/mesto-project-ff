@@ -6,30 +6,26 @@ const config = {
   }
 }
 
+function getResponseData(res) {
+  if (res.ok) {
+    return res.json();
+  }
+
+  return Promise.reject(`Ошибка: ${res.status}`);
+}
+
 export const getInitialCards = () => {
   return fetch(`${config.baseUrl}/cards`, {
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-
-      return Promise.reject(`Ошибка запроса карточек: ${res.status}`);
-    });
+    .then(res => getResponseData(res));
 }
 
 export const getProfileInfo = () => {
   return fetch(`${config.baseUrl}/users/me`, {
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-  
-      return Promise.reject(`Ошибка получения профиля: ${res.status}`);
-    });
+    .then(res => getResponseData(res));
 }
 
 export const updateProfileInfo = (name, about) => {
@@ -38,13 +34,7 @@ export const updateProfileInfo = (name, about) => {
     headers: config.headers,
     body: JSON.stringify({name, about})
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();  
-      }
-
-      return Promise.reject(`Ошибка изменения профиля: ${res.status}`);
-    });
+    .then(res => getResponseData(res));
 }
 
 export const addCard = (name, link) => {
@@ -53,13 +43,7 @@ export const addCard = (name, link) => {
     headers: config.headers,
     body: JSON.stringify({name, link})
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-
-      return Promise.reject(`Ошибка добавления карточки: ${res.status}`);
-    });
+    .then(res => getResponseData(res));
 }
 
 export const removeCard = (id) => {
@@ -67,13 +51,7 @@ export const removeCard = (id) => {
     method: 'DELETE',
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-    
-      return Promise.reject(`Ошибка удаления карточки: ${res.status}`);
-    });
+    .then(res => getResponseData(res));
 }
 
 export const addLike = (id) => {
@@ -81,13 +59,7 @@ export const addLike = (id) => {
     method: 'PUT',
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-
-      return Promise.reject(`Ошибка добавления лайка: ${res.status}`);
-    });
+    .then(res => getResponseData(res));
 }
 
 export const deleteLike = (id) => {
@@ -95,13 +67,7 @@ export const deleteLike = (id) => {
     method: 'DELETE',
     headers: config.headers
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-  
-      return Promise.reject(`Ошибка удаления лайка: ${res.status}`);
-    });
+    .then(res => getResponseData(res));
 }
 
 export const updateAvatar = (avatar) => {
@@ -110,11 +76,5 @@ export const updateAvatar = (avatar) => {
     headers: config.headers,
     body: JSON.stringify({avatar})
   })
-    .then(res => {
-      if (res.ok) {
-        return res.json();
-      }
-
-      return Promise.reject(`Ошибка обновления аватара: ${res.status}`);
-    });
+    .then(res => getResponseData(res));
 }

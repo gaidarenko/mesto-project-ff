@@ -26,6 +26,15 @@ const captionPopupFullImage = document.querySelector('.popup__caption');
 const formAvatar = document.forms['edit-avatar'];
 const popupAvatar = document.querySelector('.popup_type_avatar');
 
+const VALIDATION_CONFIG = {
+  formSelector: '.popup__form',
+  inputSelector: '.popup__input',
+  submitButtonSelector: '.popup__button',
+  inactiveButtonClass: 'popup__button_disabled',
+  inputErrorClass: 'popup__input_type_error',
+  errorClass: 'popup__input-error_active'
+}
+
 Promise.all([getProfileInfo(), getInitialCards()])
   .then(([profile, cards]) => {
     profileTitle.textContent = profile.name;
@@ -45,43 +54,48 @@ document.querySelector('.profile__edit-button').addEventListener('click', functi
   formProfile.elements.name.value = profileTitle.textContent;
   formProfile.elements.description.value = profileDescription.textContent;
 
-  clearValidation(popupProfile);
+  clearValidation(popupProfile, VALIDATION_CONFIG);
   openModal(popupProfile);
 });
 
 // Обновление аватара
 document.querySelector('.profile__image').addEventListener('click', function(evt) {
   formAvatar.reset();
-  clearValidation(popupAvatar);
+  clearValidation(popupAvatar, VALIDATION_CONFIG);
   openModal(popupAvatar);
 });
 
 // Добавление новой карточки
 document.querySelector('.profile__add-button').addEventListener('click', function(evt) {
   formAddNewCard.reset();
-  clearValidation(popupAddNewCard);
+  clearValidation(popupAddNewCard, VALIDATION_CONFIG);
   openModal(popupAddNewCard);
 });
+
+function renderLoading(form, isLoading) {
+  form.elements.submit.textContent = isLoading ? 'Сохранение...' : 'Сохранить';
+}
 
 // Сохранение нового аватара
 formAvatar.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  formAvatar.elements.submit.textContent = 'Сохранение...';
+  renderLoading(formAvatar, true);
 
   const link = formAvatar.elements.link.value;
 
   updateAvatar(link)
     .then(res => {
       profileImage.style.backgroundImage = `url(${res.avatar})`;
+
+      formAvatar.reset();
+      closeModal(popupAvatar);
     })
     .catch(err => {
       console.log(err);
     })
     .finally(() => {
-      formAvatar.elements.submit.textContent = 'Сохранить';
-      formAvatar.reset();
-      closeModal(popupAvatar);
+      renderLoading(formAvatar, false);
     });
 
 });
@@ -90,19 +104,20 @@ formAvatar.addEventListener('submit', function(evt) {
 formProfile.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  formProfile.elements.submit.textContent = 'Сохранение...';
+  renderLoading(formProfile, true);
 
   updateProfileInfo(formProfile.elements.name.value, formProfile.elements.description.value)
     .then(res => {
-      profileTitle.textContent = formProfile.elements.name.value;
-      profileDescription.textContent = formProfile.elements.description.value;
+      profileTitle.textContent = res.name;
+      profileDescription.textContent = res.about;
+
+      closeModal(popupProfile);
     })
     .catch(err => {
       console.log(err);
     })
     .finally(() => {
-      formProfile.elements.submit.textContent = 'Сохранить';
-      closeModal(popupProfile);
+      renderLoading(formProfile, false);
     });
 
 });
@@ -111,7 +126,7 @@ formProfile.addEventListener('submit', function(evt) {
 formAddNewCard.addEventListener('submit', function(evt) {
   evt.preventDefault();
 
-  formAddNewCard.elements.submit.textContent = 'Сохранение...';
+  renderLoading(formAddNewCard, true);
 
   const name = formAddNewCard.elements['place-name'].value;
   const link = formAddNewCard.elements.link.value;
@@ -120,14 +135,15 @@ formAddNewCard.addEventListener('submit', function(evt) {
     .then(res => {
       const card = createCard(res, deleteCard, doLike, showFullImage, res.owner._id);
       placesElement.prepend(card);    
+
+      formAddNewCard.reset();
+      closeModal(popupAddNewCard);
     })
     .catch(err => {
       console.log(err)
     })
     .finally(() => {
-      formAddNewCard.elements.submit.textContent = 'Сохранить';
-      formAddNewCard.reset();
-      closeModal(popupAddNewCard);
+      renderLoading(formAddNewCard, false);
     });
 });
 
@@ -152,13 +168,5 @@ function showFullImage(name, link) {
   openModal(popupFullImage);
 }
 
-enableValidation();
-/*
-{
-  formSelector: '.popup__form',
-  inputSelector: '.popup__input',
-  submitButtonSelector: '.popup__button',
-  inactiveButtonClass: 'popup__button_disabled',
-  inputErrorClass: 'popup__input_type_error',
-  errorClass: 'popup__error_visible'
-}); */
+
+enableValidation(VALIDATION_CONFIG);
