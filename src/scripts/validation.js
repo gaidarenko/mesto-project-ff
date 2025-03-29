@@ -61,6 +61,7 @@ const hideInputError = (formElement, inputElement, config) => {
   inputElement.classList.remove(config.inputErrorClass);
   errorElement.classList.remove(config.errorClass);
   errorElement.textContent = '';
+  inputElement.setCustomValidity('');
 };
 
 const hasInvalidInput = (inputList) => {
